@@ -13,7 +13,7 @@ router.get('/countries', (req, res, next) => {
     });
     return;
   }
-  req.db.from('data').distinct('country')
+  req.db.from('data').distinct('country').orderBy("country")
     .then((rows) => {
       let output = [];
       rows.map((value) => {
@@ -34,6 +34,14 @@ router.get('/volcanoes', (req, res, next) => {
 
   let country = req.query.country;
   let populatedWithin = req.query.populatedWithin;
+
+  if(!country){
+    res.status(400).json({
+      error:true,
+      message: "Country is a required query parameter."
+    })
+    return;
+  }
   
   if(populatedWithin){
     if(!validDistance(populatedWithin)){
@@ -58,7 +66,7 @@ router.get('/volcanoes', (req, res, next) => {
     else {
       req.db.from('data').select('id','name','country','region','subregion').where("country", "=", country)
         .then((rows) => {
-          res.status.send(rows);
+          res.status(200).send(rows);
         })
         .catch((err) => {
           console.log(err);
@@ -74,7 +82,9 @@ router.get('/volcano/:id', authoriseVolcano, (req, res, next) => {
 
   // valid jwt token
   if(id && token){
-    req.db.from("data").select("*").where("id", "=", id)
+    req.db.from("data").select("id","name","country","region","subregion",
+    "last_eruption","summit","elevation","latitude","longitude","population_5km",
+    "population_10km","population_30km","population_100km").where("id", "=", id)
     .then((rows) => {
       if(rows.length == 0){
         res.status(404).json({
@@ -83,7 +93,7 @@ router.get('/volcano/:id', authoriseVolcano, (req, res, next) => {
         })
         return;
       }
-      res.send(rows);
+      res.status(200).send(rows[0]);
     })
   }
   else{
@@ -97,7 +107,7 @@ router.get('/volcano/:id', authoriseVolcano, (req, res, next) => {
         })
         return;
       }
-      res.send(rows);
+      res.status(200).send(rows[0]);
     })
   }
 });
