@@ -60,8 +60,16 @@ router.put('/user/:email/profile', authorisePutProfile, async (req, res, next) =
     }
   })
 
+  if(Object.keys(changes).length != 4){
+    res.status(400).json({
+      error:true,
+      message: "Request body incomplete: firstName, lastName, dob and address are required."
+    })
+    return;
+  }
+
   try {
-    const count = await req.db.from("users").where({ email }).update(changes);
+    const count = await req.db.from("users").where("email", "=", email).update(changes);
     if (count) {
       req.db.from("users").select("email", "firstName", "lastName", "dob", "address").where("email", "=", email)
         .then((rows) => {
