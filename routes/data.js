@@ -6,7 +6,10 @@ const {validDistance} = require("../utils/helperfunction");
 router.get('/countries', (req, res, next) => {
 
   if(Object.keys(req.query).length != 0){
-    res.status(400).json({error:"true",message:"Invalid query parameters: " + Object.keys(req.query) + " Query parameters are not permitted."});
+    res.status(400).json({
+      error:true,
+      message:"Invalid query parameters: " + Object.keys(req.query) + " Query parameters are not permitted."
+    });
     return;
   }
   req.db.from('data').distinct('country')
@@ -19,7 +22,9 @@ router.get('/countries', (req, res, next) => {
     })
     .catch((err) => {
       console.log(err);
-      res.json({ "Error": true, "Message": "Error executing MySQL query" })
+      res.json({ error: true, 
+      "Message": "Error executing MySQL query" 
+    });
     })
 });
 
@@ -31,7 +36,9 @@ router.get('/volcanoes', (req, res, next) => {
   
   if(populatedWithin){
     if(!validDistance(populatedWithin)){
-      res.status(400).json({error:"true", message: `Invalid value for populatedWithin: ${populatedWithin}. Only: 5km,10km,30km,100km are permitted.`});
+      res.status(400).json({error: true,
+        message: `Invalid value for populatedWithin: ${populatedWithin}. Only: 5km,10km,30km,100km are permitted.`
+      });
       return;
     }
   }
