@@ -47,7 +47,6 @@ router.get('/user/:email/profile', authoriseGetProfile, (req, res, next) => {
 
 router.put('/user/:email/profile', authorisePutProfile, async (req, res, next) => {
   const email = req.params.email;
-  const token = req.headers.authorization;
 
   const changes = req.body;
 
