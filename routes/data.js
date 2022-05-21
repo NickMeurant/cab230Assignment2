@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {validDistance} = require("../utils/helperfunction");
+const {authoriseVolcano} = require("../middlware/middleware");
 
 /* GET users listing. */
 router.get('/countries', (req, res, next) => {
@@ -67,13 +68,35 @@ router.get('/volcanoes', (req, res, next) => {
   }
 });
 
-router.get('/volcano/:id', (req, res, next) => {
-  let id = req.params.id;
+router.get('/volcano/:id', authoriseVolcano, (req, res, next) => {
+  const id = req.params.id;
+  const token = req.headers.authorization;
 
   // valid jwt token
-  if(id){
+  if(id && token){
     req.db.from("data").select("*").where("id", "=", id)
     .then((rows) => {
+      if(rows.length == 0){
+        res.status(404).json({
+          error:true,
+          message:`Volcano with ID: ${id} not found.`
+        })
+        return;
+      }
+      res.send(rows);
+    })
+  }
+  else{
+    req.db.from("data").select("id","name","country","region","subregion",
+    "last_eruption","summit","elevation","latitude","longitude").where("id", "=", id)
+    .then((rows) => {
+      if(rows.length == 0){
+        res.status(404).json({
+          error:true,
+          message:`Volcano with ID: ${id} not found.`
+        })
+        return;
+      }
       res.send(rows);
     })
   }
