@@ -58,6 +58,7 @@ router.get('/volcanoes', (req, res, next) => {
 router.get('/volcano/:id', (req, res, next) => {
   let id = req.params.id;
 
+  // valid jwt token
   if(id){
     req.db.from("data").select("*").where("id", "=", id)
     .then((rows) => {

@@ -11,7 +11,6 @@ const admin = require("./routes/administration");
 const auth = require("./routes/authentication");
 const data = require("./routes/data");
 const profile = require("./routes/profile");
-const users = require("./routes/users");
 
 const app = express();
 // view engine setup
@@ -33,7 +32,6 @@ app.use("/", admin);
 app.use("/", auth);
 app.use("/", data);
 app.use("/", profile);
-app.use("/", users);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
