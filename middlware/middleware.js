@@ -36,6 +36,7 @@ const authoriseGetProfile = (req, res, next) => {
 
     if (!authorization) {
         next();
+        return;
     }
 
     const token = authorization;
@@ -49,7 +50,7 @@ const authoriseGetProfile = (req, res, next) => {
                 error: true,
                 message: "JWT token has expired"
             })
-            return;
+            res.end();
         }
         next();
     } catch (e) {
@@ -57,6 +58,7 @@ const authoriseGetProfile = (req, res, next) => {
             error: true,
             message: "Invalid query parameters. Query parameters are not permitted."
         })
+        res.end();
     }
 }
 

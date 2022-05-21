@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const {authorisePutProfile, authoriseGetProfile} = require("../middlware/middleware");
 
 /* GET users listing. */
-router.get('/user/:email/profile', (req, res, next) => {
+router.get('/user/:email/profile', authoriseGetProfile, (req, res, next) => {
   const email = req.params.email;
   const token = req.headers.authorization;
 
