@@ -4,13 +4,18 @@ const {validDistance} = require("../utils/helperfunction");
 
 /* GET users listing. */
 router.get('/countries', (req, res, next) => {
+
+  if(Object.keys(req.query).length != 0){
+    res.status(400).json({error:"true",message:"Invalid query parameters: " + Object.keys(req.query) + " Query parameters are not permitted."});
+    return;
+  }
   req.db.from('data').distinct('country')
     .then((rows) => {
       let output = [];
       rows.map((value) => {
         output.push(value.country);
       })
-      res.send(output);
+      res.status(200).send(output);
     })
     .catch((err) => {
       console.log(err);
