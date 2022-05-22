@@ -4,7 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const swaggerUI = require("swagger-ui-express");
-const swaggerDocument = ("./docs/swaggerpet.json");
+const swaggerDocument = require("./docs/swaggerpet.json.json");
 const jwt = require("jsonwebtoken");
 
 const options = require('./knexfile.js');
@@ -31,29 +31,13 @@ app.use((req, res, next) => {
   req.db = knex
   next();
 })
-
-// app.use((req,res,next) => {
-//   if(req.headers.authorization){
-//     const token = req.headers.authorization.split(" ")[1];
-//     jwt.verify(token, "secret key", (err, user) => {
-//       if(err){
-//         res.status(401).json({
-//           error: true,
-//           message: "Authorization header is malformed"
-//         })
-//         res.end();
-//         return;
-//       }
-//       next();
-//     })
-//   }
-//   next();
-// })
-
-app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 app.use("/", admin);
 app.use("/", auth);
 app.use("/", data);
 app.use("/", profile);
+app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 
+app.listen(3000, () => {
+  console.log("server is listening on port 3000");
+})
 module.exports = app;
