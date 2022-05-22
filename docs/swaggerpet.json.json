@@ -1,27 +1,10 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "version": "1.0.0",
+    "version": "2.0.0",
     "title": "Volcanoes around the world v2",
     "description": "This API has been created to support assignment two in CAB230, Web Computing. It exposes a number of REST endpoints which implement CRUD operations on a database containing publicly available data about volcanoes collated by the Smithsonian Institution's Global Volcanism Program. The API endpoints and their usage are described in detail below."
   },
-  "host": "localhost:3000",
-  "basePath": "/",
-  "tags": [
-    {
-      "name": "Users",
-      "description": "API for users in the system"
-    }
-  ],
-  "schemes": [
-    "http"
-  ],
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
-  ],
   "components": {
     "securitySchemes": {
       "bearerAuth": {
@@ -418,7 +401,9 @@
         ],
         "security": [
           {
-            "bearerAuth": []
+            "bearerAuth": [
+              
+            ]
           }
         ],
         "responses": {
@@ -739,7 +724,9 @@
         ],
         "security": [
           {
-            "bearerAuth": []
+            "bearerAuth": [
+              
+            ]
           }
         ],
         "tags": [
@@ -849,7 +836,9 @@
         ],
         "security": [
           {
-            "bearerAuth": []
+            "bearerAuth": [
+              
+            ]
           }
         ],
         "tags": [
