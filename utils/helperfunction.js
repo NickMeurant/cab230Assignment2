@@ -6,4 +6,4 @@ const validDistance = (distance) => {
     return false;
 }
 
-exports.validDistance = validDistance;
+module.exports = { validDistance };

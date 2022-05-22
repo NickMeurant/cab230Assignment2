@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const { authorisePutProfile, authoriseGetProfile } = require("../middlware/middleware");
+const { authorisePutProfile, authoriseGetProfile , dateCheck} = require("../middlware/middleware");
 
 /* GET users listing. */
 router.get('/user/:email/profile', authoriseGetProfile, (req, res, next) => {
@@ -52,43 +52,39 @@ router.get('/user/:email/profile', authoriseGetProfile, (req, res, next) => {
 
 router.put('/user/:email/profile', authorisePutProfile, async (req, res, next) => {
 
-  const isNumeric = (num) => (typeof(num) === 'number' || typeof(num) === "string" && num.trim() !== '') && !isNaN(num);
+  const isNumeric = (num) => (typeof (num) === 'number' || typeof (num) === "string" && num.trim() !== '') && !isNaN(num);
 
   const email = req.params.email;
 
   const changes = req.body;
 
-  if(Object.keys(changes).length < 4){
+  if (Object.keys(changes).length < 4) {
     res.status(400).json({
-      error:true,
+      error: true,
       message: "Request body incomplete: firstName, lastName, dob and address are required."
     })
     res.end();
     return;
   }
 
-  const date_regex = /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/;
-
-  Object.keys(changes).forEach(async (item) => { // checks they are strings
-    // if(typeof item !== 'string'){
-    //   res.status(400).json({
-    //     error:true,
-    //     message: "Request body invalid: firstName, lastName and address must be strings only."
-    //   })
-    //   res.end();
-    //   return;
-    // }
-
-    if(isNumeric(changes[item])) {
-      console.log("number found");
-      await res.status(400).json({
+  for (const item in changes){ // checks they are strings
+    if (isNumeric(changes[item])) {
+      res.status(400).json({
         error: true,
         message: "Request body invalid: firstName, lastName and address must be strings only."
       })
       res.end();
       return;
     }
-  })
+    if(changes[item] == true || changes[item] == false){
+      res.status(400).json({
+        error: true,
+        message: "Request body invalid: firstName, lastName and address must be strings only."
+      })
+      res.end();
+      return;
+    }
+  }
 
   Object.keys(changes).forEach((item) => { // checks everything is there
     if (!(item == "firstName" || item == "lastName" || item == "address" || item == "dob")) {
@@ -107,7 +103,41 @@ router.put('/user/:email/profile', authorisePutProfile, async (req, res, next) =
     return;
   }
 
+  // data checkker implementation
 
+  const regex = /^\d{4}-\d{2}-\d{2}$/;
+
+  if(changes["dob"].match(regex) === null){ // valid form
+    res.status(400).json({
+      error: true,
+      message: "Invalid input: dob must be a real date in format YYYY-MM-DD."
+    })
+    res.end();
+    return;
+  }
+
+  const date = new Date(changes["dob"]);
+
+  const timestamp = date.getTime();
+
+  if(timestamp > Date.now()){
+    res.status(400).json({
+      error: true,
+      message: "Invalid input: dob must be a date in the past."
+    })
+    return;
+  }
+
+  console.log(date);
+  console.log(changes["dob"]);
+
+  if (changes["dob"].split("-")[2] != date.getDate()){ // valid 
+    res.status(400).json({
+      error: true,
+      message: "Invalid input: dob must be a real date in format YYYY-MM-DD."
+    })
+    return;
+  }
 
   try {
     const count = await req.db.from("users").where("email", "=", email).update(changes);

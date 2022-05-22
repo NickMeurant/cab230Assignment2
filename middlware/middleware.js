@@ -139,4 +139,4 @@ const authorisePutProfile = (req, res, next) => {
     }
 }
 
-module.exports = { authoriseVolcano, authoriseGetProfile, authorisePutProfile };
+module.exports = { authoriseVolcano, authoriseGetProfile, authorisePutProfile};
