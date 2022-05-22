@@ -11,8 +11,10 @@ router.get('/countries', (req, res, next) => {
       error:true,
       message:"Invalid query parameters: " + Object.keys(req.query) + " Query parameters are not permitted."
     });
+    res.end();
     return;
   }
+
   req.db.from('data').distinct('country').orderBy("country")
     .then((rows) => {
       let output = [];
@@ -22,7 +24,6 @@ router.get('/countries', (req, res, next) => {
       res.status(200).send(output);
     })
     .catch((err) => {
-      console.log(err);
       res.json({ error: true, 
       "Message": "Error executing MySQL query" 
     });
@@ -40,7 +41,25 @@ router.get('/volcanoes', (req, res, next) => {
       error:true,
       message: "Country is a required query parameter."
     })
+    res.end();
     return;
+  }
+
+  if(Object.keys(req.query).length > 2){
+    res.status(400).json({
+      errror : true,
+      message: "Invalid query parameters. Only country and populatedWithin are permitted."
+    });
+    return;
+  }
+  else if(Object.keys(req.query).length == 2){
+    if(!country || !populatedWithin){
+      res.status(400).json({
+        error : true,
+        message: "Invalid query parameters. Only country and populatedWithin are permitted."
+      })
+      return;
+    }
   }
   
   if(populatedWithin){
@@ -59,7 +78,6 @@ router.get('/volcanoes', (req, res, next) => {
           res.status(200).send(rows);
         })
         .catch((err) => {
-          console.log(err);
           res.json({ "Error": true, "Message": "Error executing MySQL query" })
         })
     }
@@ -79,7 +97,6 @@ router.get('/volcanoes', (req, res, next) => {
 router.get('/volcano/:id', authoriseVolcano, (req, res, next) => {
   const id = req.params.id;
   const token = req.headers.authorization;
-
   // valid jwt token
   if(id && token){
     req.db.from("data").select("id","name","country","region","subregion",
@@ -91,6 +108,7 @@ router.get('/volcano/:id', authoriseVolcano, (req, res, next) => {
           error:true,
           message:`Volcano with ID: ${id} not found.`
         })
+        res.end();
         return;
       }
       res.status(200).send(rows[0]);
@@ -105,6 +123,7 @@ router.get('/volcano/:id', authoriseVolcano, (req, res, next) => {
           error:true,
           message:`Volcano with ID: ${id} not found.`
         })
+        res.end();
         return;
       }
       res.status(200).send(rows[0]);

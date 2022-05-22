@@ -8,26 +8,43 @@ const authoriseVolcano = (req, res, next) => {
         return;
     }
 
-    const token = authorization;
+    if (authorization.split(" ").length != 2) {
+        res.status(401).json({
+            error: true,
+            message: "Authorization header is malformed"
+        })
+        res.end();
+        return;
+    }
 
-    try {
-        const decoded = jwt.verify(token, "secret key");
+    const token = req.headers.authorization.split(" ")[1];
 
-        if (decoded.exp < Date.now()) {
-            console.log("Token has expired");
+    jwt.verify(token, "secret key", (err, user) => {
+        if (err) {
             res.status(401).json({
                 error: true,
                 message: "Invalid JWT token"
             })
             res.end();
+            return;
+        }
+    })
+
+    try {
+        const decoded = jwt.verify(token, "secret key");
+
+        if (decoded.exp < Date.now()) {
+            res.status(401).json({
+                error: true,
+                message: "JWT token has expired"
+            })
+            res.end();
+            return;
         }
         next();
     } catch (e) {
-        res.status(401).json({
-            error: true,
-            message: "Invalid JWT token"
-        })
         res.end();
+        return;
     }
 }
 
@@ -39,24 +56,31 @@ const authoriseGetProfile = (req, res, next) => {
         return;
     }
 
-    const token = authorization;
+    if (authorization.split(" ").length != 2) {
+        res.status(401).json({
+            error: true,
+            message: "Authorization header is malformed"
+        })
+    }
+
+    const token = req.headers.authorization.split(" ")[1];
 
     try {
         const decoded = jwt.verify(token, "secret key");
 
         if (decoded.exp < Date.now()) {
-            console.log("Token has expired");
             res.status(401).json({
                 error: true,
                 message: "JWT token has expired"
             })
             res.end();
+            return;
         }
         next();
     } catch (e) {
         res.status(401).json({
             error: true,
-            message: "Invalid query parameters. Query parameters are not permitted."
+            message: "Invalid JWT token ", e
         })
         res.end();
     }
@@ -67,44 +91,49 @@ const authorisePutProfile = (req, res, next) => {
     const email = req.params.email;
 
     if (!authorization) {
+        res.status(401).json({
+            error: true,
+            message: "Authorization header ('Bearer token') not found"
+        })
+        res.end();
+        return;
+    }
+
+    if (authorization.split(" ").length != 2) {
+        res.status(401).json({
+            error: true,
+            message: "Authorization header is malformed"
+        })
+    }
+
+    const token = req.headers.authorization.split(" ")[1];
+
+    const decoded = jwt.verify(token, "secret key");
+    if (decoded.email != email) {
         res.status(403).json({
             error: true,
             message: "Forbidden"
         })
         res.end();
-    }
-
-    const token = authorization;
-
-    if (token) {
-        const decoded = jwt.verify(token, "secret key");
-        if (decoded.email === email) {
-            sameEmail = true;
-        } else {
-            res.status(403).json({
-                error: true,
-                message: "Forbidden"
-            })
-            return;
-        }
+        return;
     }
 
     try {
         const decoded = jwt.verify(token, "secret key");
 
         if (decoded.exp < Date.now()) {
-            console.log("Token has expired");
             res.status(401).json({
                 error: true,
-                message: "Authorization header ('Bearer token') not found"
+                message: "JWT token has expired"
             })
             res.end();
+            return;
         }
         next();
     } catch (e) {
         res.status(401).json({
             error: true,
-            message: "Invalid query parameters. Query parameters are not permitted."
+            message: "Invalid JWT token"
         })
         res.end();
     }

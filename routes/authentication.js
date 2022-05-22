@@ -32,11 +32,9 @@ router.post('/user/register', (req, res, next) => {
         message: "User Created"
       });
     }).catch((error) =>{
-      console.log("something went wrong " + error);
       res.status(500).json({message: "Internal Error"});
     })
   }).catch((error) => {
-    console.log("something went wrong " + error);
     res.status(500).json({message: "Internal Error"});
   })
 });
@@ -60,6 +58,7 @@ router.post('/user/login', (req, res, next) => {
         error: true,
         message: "Incorrect email or password"
       })
+      res.end();
       return;
     }
     const user = users[0];
@@ -70,6 +69,7 @@ router.post('/user/login', (req, res, next) => {
         error: true,
         message: "Incorrect email or password"
       })
+      res.end();
       return;
     }
     const secretKey = "secret key";
@@ -82,7 +82,6 @@ router.post('/user/login', (req, res, next) => {
       expires_in: expires_in
     })
   }).catch((error) =>{
-    console.log("Something went wrong " + error);
     // res.status(500).json({message: "Database Error"});
   })
 });
