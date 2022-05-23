@@ -41,7 +41,7 @@ app.use("/", data);
 app.use("/", profile);
 app.use("/docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
-app.get("/", function(req,res){
+app.get("/", function(req,res){ // this is so it passes unit testing
   res.redirect("/docs");
 })
 
