@@ -13,6 +13,13 @@
         "description": "Enter JWT Bearer token **_only_**"
       }
     },
+    "host":"http://localhost:3000",
+    "basePath": "/",
+    "servers": [
+      {
+        "url": "http://localhost:3000"
+      }
+    ],
     "schemas": {
       "MissingCountryParameterVolcanoes": {
         "type": "object",
@@ -401,9 +408,7 @@
         ],
         "security": [
           {
-            "bearerAuth": [
-              
-            ]
+            "bearerAuth": []
           }
         ],
         "responses": {
@@ -724,9 +729,7 @@
         ],
         "security": [
           {
-            "bearerAuth": [
-              
-            ]
+            "bearerAuth": []
           }
         ],
         "tags": [
@@ -836,9 +839,7 @@
         ],
         "security": [
           {
-            "bearerAuth": [
-              
-            ]
+            "bearerAuth": []
           }
         ],
         "tags": [

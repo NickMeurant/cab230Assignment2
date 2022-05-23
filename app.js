@@ -39,7 +39,11 @@ app.use("/", admin);
 app.use("/", auth);
 app.use("/", data);
 app.use("/", profile);
-app.use("/", swaggerUI.serve, swaggerUI.setup(swaggerDocument))
+app.use("/docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
+
+app.get("/", function(req,res){
+  res.redirect("/docs");
+})
 
 app.use(function(req, res, next) {
   return res.status(404).json({
