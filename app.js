@@ -3,7 +3,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const swaggerUI = require("swagger-ui-express");
+const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./docs/swaggerpet.json.json");
 const cors = require('cors');
 
@@ -25,10 +25,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-// app.use((err, req, res, next) => {
-//   console.error(err.stack)
-//   res.status(500).send('Something broke!')
-// })
 
 
 app.use((req, res, next) => {
@@ -39,11 +35,14 @@ app.use("/", admin);
 app.use("/", auth);
 app.use("/", data);
 app.use("/", profile);
-app.use("/docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
-app.get("/", function(req,res){ // this is so it passes unit testing
-  res.redirect("/docs");
-})
+app.use("/", swaggerUi.serve);
+app.get(
+  "/",
+  swaggerUi.setup(swaggerDocument, {
+    swaggerOptions: { defaultModelsExpandDepth: -1 }, // Hide schema section
+  })
+);
 
 app.use(function(req, res, next) {
   return res.status(404).json({

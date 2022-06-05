@@ -92,8 +92,6 @@ router.put('/user/:email/profile', authorisePutProfile, async (req, res, next) =
     }
   })
 
-  // console.log(changes);
-
   if (Object.keys(changes).length != 4) { //
     res.status(400).json({
       error: true,
@@ -127,9 +125,6 @@ router.put('/user/:email/profile', authorisePutProfile, async (req, res, next) =
     })
     return;
   }
-
-  console.log(date);
-  console.log(changes["dob"]);
 
   if (changes["dob"].split("-")[2] != date.getDate()){ // valid 
     res.status(400).json({
