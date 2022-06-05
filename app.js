@@ -20,17 +20,17 @@ const app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(cors());
-app.use(logger('dev'));
+app.use(logger('common'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
 app.use((req, res, next) => {
   req.db = knex
   next();
 })
+
 app.use("/", admin);
 app.use("/", auth);
 app.use("/", data);
